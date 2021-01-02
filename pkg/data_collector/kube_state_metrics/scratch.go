@@ -21,12 +21,12 @@ func GetMetrics() {
 
 	requestClient := http.Client{}
 
-	resp, err := requestClient.Get("http://127.0.0.1:8080/metrics")
+	resp, err := requestClient.Get("http://127.0.0.1:7020")//http://127.0.0.1:8080/metrics
 
 	if err != nil {
 		fmt.Println("Failed to get metrics: ", err)
 	}
-
+	
 	Prom2Json(resp.Body)
 }
 

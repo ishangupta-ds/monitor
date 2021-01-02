@@ -3,13 +3,15 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+
 	"github.com/ishangupta-ds/monitor/pkg/connection"
 	"github.com/ishangupta-ds/monitor/pkg/data_collector"
 )
 
 func main() {
 
-	clientset, err := connection.GetClientSet("/home/afour/.kube/config")
+	clientset, err := connection.GetClientSet(os.Getenv("KUBE_CONFIG"))//~/.kube/config
 	if err != nil {
 		fmt.Println(err)
 	}
