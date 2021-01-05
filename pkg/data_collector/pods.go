@@ -3,6 +3,8 @@ package data_collector
 import (
 	"encoding/json"
 	"fmt"
+
+	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/kubernetes"
@@ -25,6 +27,7 @@ type PodInfo struct {
 	APIVersion        string
 	ClusterName       string
 	CreationTimestamp metav1.Time
+	Containers        []v1.Container
 }
 
 func (ppnsd *PodsPerNameSpaceDetails) Serialize() (string, error) {
@@ -51,6 +54,7 @@ func GetAllPodsByNamespace(pc *PodClient, namespace string) *PodsPerNameSpaceDet
 			APIVersion:        pod.APIVersion,
 			ClusterName:       pod.ClusterName,
 			CreationTimestamp: pod.CreationTimestamp,
+			Containers:        pod.Spec.Containers,
 		}
 		ppsd.PodsInfo = append(ppsd.PodsInfo, podInfo)
 		ppsd.TotalPods += 1

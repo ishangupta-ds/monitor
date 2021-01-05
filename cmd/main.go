@@ -11,7 +11,7 @@ import (
 
 func main() {
 
-	clientset, err := connection.GetClientSet(os.Getenv("KUBE_CONFIG"))//~/.kube/config
+	clientset, err := connection.GetClientSet(os.Getenv("KUBE_CONFIG")) //~/.kube/config
 	if err != nil {
 		fmt.Println(err)
 	}
