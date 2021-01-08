@@ -2,6 +2,7 @@ package data_collector
 
 import (
 	"fmt"
+
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
@@ -17,6 +18,8 @@ type NodeDetails struct {
 	NodeAddresses  []NodeAddress
 	NodeSystemInfo *NodeSystemInfo
 	NodeCapacity   *NodeCapacity
+	Labels         map[string]string
+	Annotations    map[string]string
 }
 
 type NodeInfo struct {
@@ -40,13 +43,14 @@ func (na *NodeAddress) setter(nodeAddr *v1.NodeAddress) {
 }
 
 type NodeSystemInfo struct {
-	Architecture     string
-	KernelVersion    string
-	KubeProxyVersion string
-	KubeletVersion   string
-	OperatingSystem  string
-	OsImage          string
-	SystemUUID       string
+	Architecture            string
+	KernelVersion           string
+	KubeProxyVersion        string
+	KubeletVersion          string
+	OperatingSystem         string
+	OsImage                 string
+	SystemUUID              string
+	ContainerRuntimeVersion string
 }
 
 func (nsi *NodeSystemInfo) setter(node *v1.Node) {
@@ -57,6 +61,7 @@ func (nsi *NodeSystemInfo) setter(node *v1.Node) {
 	nsi.SystemUUID = node.Status.NodeInfo.SystemUUID
 	nsi.KubeletVersion = node.Status.NodeInfo.KernelVersion
 	nsi.KubeProxyVersion = node.Status.NodeInfo.KubeProxyVersion
+	nsi.ContainerRuntimeVersion = node.Status.NodeInfo.ContainerRuntimeVersion
 }
 
 type MaxPodsPerNode int8
@@ -101,6 +106,8 @@ func GetAllNodesDetails(clientset *kubernetes.Clientset) map[string]*NodeDetails
 			na := NodeAddress{Address: addr.Address, Type: string(addr.Type)}
 			nc.NodeAddresses = append(nc.NodeAddresses, na)
 		}
+		nc.Labels = node.GetLabels()
+		nc.Annotations = node.GetAnnotations()
 
 		nodeMap[node.Name] = &nc
 	}

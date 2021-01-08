@@ -2,6 +2,7 @@ package data_collector
 
 import (
 	"fmt"
+
 	apiV1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
@@ -28,6 +29,8 @@ type ServiceInfo struct {
 	Ports             []apiV1.ServicePort
 	ClusterIP         string
 	ExternalIPs       []string
+	Labels            map[string]string
+	Annotations       map[string]string
 }
 
 func GetAllServiceByNamespace(sc *ServiceClient, namespace string) *ServicePerNamespaceDetails {
@@ -53,6 +56,8 @@ func GetAllServiceByNamespace(sc *ServiceClient, namespace string) *ServicePerNa
 			Ports:             s.Spec.Ports,
 			ClusterIP:         s.Spec.ClusterIP,
 			ExternalIPs:       s.Spec.ExternalIPs,
+			Labels:            s.GetLabels(),
+			Annotations:       s.GetAnnotations(),
 		}
 		spnsd.ServicesInfo = append(spnsd.ServicesInfo, serviceInfo)
 	}

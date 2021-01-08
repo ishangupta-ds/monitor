@@ -2,6 +2,7 @@ package data_collector
 
 import (
 	"fmt"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/kubernetes"
@@ -25,6 +26,8 @@ type ConfigMapInfo struct {
 	CreationTimestamp metav1.Time
 	DataSize          int
 	BinaryDataSize    int
+	Labels            map[string]string
+	Annotations       map[string]string
 }
 
 func GetAllConfigMapByNamespace(cmc *ConfigMapClient, namespace string) *ConfigMapsPerNamespaceDetails {
@@ -48,6 +51,8 @@ func GetAllConfigMapByNamespace(cmc *ConfigMapClient, namespace string) *ConfigM
 			CreationTimestamp: cm.GetCreationTimestamp(),
 			DataSize:          len(cm.Data),
 			BinaryDataSize:    len(cm.BinaryData),
+			Labels:            cm.GetLabels(),
+			Annotations:       cm.GetAnnotations(),
 		}
 		cmnsd.ConfigMapsInfo = append(cmnsd.ConfigMapsInfo, configMapInfo)
 	}

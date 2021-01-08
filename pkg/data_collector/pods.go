@@ -28,6 +28,9 @@ type PodInfo struct {
 	ClusterName       string
 	CreationTimestamp metav1.Time
 	Containers        []v1.Container
+	NodeSelectors     map[string]string
+	Labels            map[string]string
+	Annotations       map[string]string
 }
 
 func (ppnsd *PodsPerNameSpaceDetails) Serialize() (string, error) {
@@ -55,6 +58,9 @@ func GetAllPodsByNamespace(pc *PodClient, namespace string) *PodsPerNameSpaceDet
 			ClusterName:       pod.ClusterName,
 			CreationTimestamp: pod.CreationTimestamp,
 			Containers:        pod.Spec.Containers,
+			NodeSelectors:     pod.Spec.NodeSelector,
+			Labels:            pod.GetLabels(),
+			Annotations:       pod.GetAnnotations(),
 		}
 		ppsd.PodsInfo = append(ppsd.PodsInfo, podInfo)
 		ppsd.TotalPods += 1

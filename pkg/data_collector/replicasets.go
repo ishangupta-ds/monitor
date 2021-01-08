@@ -2,6 +2,7 @@ package data_collector
 
 import (
 	"fmt"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/kubernetes"
@@ -27,6 +28,10 @@ type ReplicaSetInfo struct {
 	Replicas          *int32
 	ReadyReplicas     int32
 	AvailableReplicas int32
+	NodeSelectors     map[string]string
+	LabelSelectors    metav1.LabelSelector
+	Labels            map[string]string
+	Annotations       map[string]string
 }
 
 func GetAllReplicaSetByNamespace(rsc *ReplicaSetClient, namespace string) *ReplicaSetPerNamespaceDetails {
@@ -52,6 +57,10 @@ func GetAllReplicaSetByNamespace(rsc *ReplicaSetClient, namespace string) *Repli
 			Replicas:          rs.Spec.Replicas,
 			ReadyReplicas:     rs.Status.ReadyReplicas,
 			AvailableReplicas: rs.Status.AvailableReplicas,
+			NodeSelectors:     rs.Spec.Template.Spec.NodeSelector,
+			LabelSelectors:    *rs.Spec.Selector,
+			Labels:            rs.GetLabels(),
+			Annotations:       rs.GetAnnotations(),
 		}
 		rspnsd.ReplicaSetsInfo = append(rspnsd.ReplicaSetsInfo, replicasetInfo)
 		rspnsd.TotalReplicaSets += 1

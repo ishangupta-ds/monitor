@@ -2,6 +2,7 @@ package data_collector
 
 import (
 	"fmt"
+
 	v1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
@@ -25,6 +26,8 @@ type RolesInfo struct {
 	Clustername       string
 	CreationTimestamp metav1.Time
 	Rules             []v1.PolicyRule
+	Labels            map[string]string
+	Annotations       map[string]string
 }
 
 func GetAllRolesByNamespace(rc *RolesClient, namespace string) *RolesPerNamespaceDetails {
@@ -47,6 +50,8 @@ func GetAllRolesByNamespace(rc *RolesClient, namespace string) *RolesPerNamespac
 			Clustername:       r.GetClusterName(),
 			CreationTimestamp: r.GetCreationTimestamp(),
 			Rules:             r.Rules,
+			Labels:            r.GetLabels(),
+			Annotations:       r.GetAnnotations(),
 		}
 		rpnsd.RolesInfo = append(rpnsd.RolesInfo, rolesInfo)
 	}

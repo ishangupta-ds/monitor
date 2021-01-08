@@ -2,6 +2,7 @@ package data_collector
 
 import (
 	"fmt"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/kubernetes"
@@ -25,6 +26,10 @@ type DeploymentInfo struct {
 	ClusterName       string
 	CreationTimestamp metav1.Time
 	Replicas          *int32
+	NodeSelectors     map[string]string
+	LabelSelectors    metav1.LabelSelector
+	Labels            map[string]string
+	Annotations       map[string]string
 }
 
 func GetAllDeploymentsByNamespace(dc *DeploymentClient, namespace string) *DeploymentPerNamespaceDetails {
@@ -49,6 +54,10 @@ func GetAllDeploymentsByNamespace(dc *DeploymentClient, namespace string) *Deplo
 			ClusterName:       deployment.ClusterName,
 			CreationTimestamp: deployment.CreationTimestamp,
 			Replicas:          deployment.Spec.Replicas,
+			NodeSelectors:     deployment.Spec.Template.Spec.NodeSelector,
+			LabelSelectors:    *deployment.Spec.Selector,
+			Labels:            deployment.GetLabels(),
+			Annotations:       deployment.GetAnnotations(),
 		}
 		dpnsd.DeploymentsInfo = append(dpnsd.DeploymentsInfo, deploymentInfo)
 		dpnsd.TotalDeployments += 1
